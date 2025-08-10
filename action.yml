@@ -1,0 +1,28 @@
+name: 'Build Dalamud Plugin'
+description: 'Action to build Dalamud plugins'
+runs:
+  using: "composite"
+  steps:
+    # We have to do this because GitHub is stupid, and won't allow normal clone URLs
+    # But we need the normal clone URL because Forgejo isn't GitHub and actions/setup-dotnet is not mirrored.
+    - name: Check out repository
+      shell: bash
+      run: |
+        git clone --depth 1 --branch v4.3.1 https://github.com/actions/setup-dotnet ./.github/actions/setup-dotnet
+    - name: Setup .NET
+      uses: ./.github/actions/setup-dotnet
+      with:
+        dotnet-version: '9.x.x'
+    - name: Restore dependencies
+      shell: bash
+      run: dotnet restore
+    - name: Download Dalamud
+      shell: bash
+      run: |
+        mkdir -p ~/.xlcore/dalamud/Hooks/dev/
+        wget https://goatcorp.github.io/dalamud-distrib/latest.zip -O latest.zip
+        unzip latest.zip -d ~/.xlcore/dalamud/Hooks/dev/
+    - name: Build
+      shell: bash
+      run: |
+        dotnet build --no-restore --configuration Release --nologo
