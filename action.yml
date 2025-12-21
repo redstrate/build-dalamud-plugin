@@ -12,7 +12,7 @@ runs:
     - name: Setup .NET
       uses: ./.github/actions/setup-dotnet
       with:
-        dotnet-version: '9.x.x'
+        dotnet-version: '10.x.x'
     - name: Restore dependencies
       shell: bash
       run: dotnet restore
